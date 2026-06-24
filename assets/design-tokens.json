@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "source": "https://news.ycombinator.com/",
+    "brand": "Hacker News",
+    "extractedAt": "2026-06-24"
+  },
+  "colors": {
+    "brand": {
+      "primary": "#ff6600",
+      "accent": "#ff6600",
+      "error": "#ff6600",
+      "success": "#ff6600"
+    },
+    "background": {
+      "default": "#f6f6ef",
+      "light": "#ffffff",
+      "header": "#ff6600",
+      "overlay": "rgba(0, 0, 0, 0.5)"
+    },
+    "text": {
+      "primary": "#000000",
+      "secondary": "#828282",
+      "muted": "#828282",
+      "dark": "#222222",
+      "onDark": "#ffffff",
+      "onBrand": "#000000"
+    },
+    "border": {
+      "logo": "#ffffff"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": "Verdana, Geneva, sans-serif"
+    },
+    "fontWeights": {
+      "regular": 400,
+      "bold": 700
+    },
+    "fontSize": {
+      "xs": "7pt",
+      "sm": "8pt",
+      "base": "10pt",
+      "md": "12pt",
+      "lg": "14pt"
+    },
+    "fontSizePx": {
+      "xs": "9.33px",
+      "base": "13.33px"
+    },
+    "lineHeight": {
+      "tight": "12px",
+      "base": "normal"
+    }
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "7": "28px",
+    "8": "32px"
+  },
+  "borderRadius": {
+    "none": "0px",
+    "default": "0px"
+  },
+  "components": {
+    "header": {
+      "backgroundColor": "#ff6600",
+      "color": "#000000",
+      "fontSize": "10pt",
+      "padding": "2px",
+      "logoBorder": "1px solid #ffffff"
+    },
+    "nav": {
+      "color": "#000000",
+      "fontSize": "10pt",
+      "fontWeight": 400,
+      "separator": " | "
+    },
+    "story": {
+      "title": { "color": "#000000", "fontSize": "10pt", "fontWeight": 400 },
+      "rank": { "color": "#828282", "fontSize": "10pt" },
+      "subtext": { "color": "#828282", "fontSize": "7pt" }
+    },
+    "link": {
+      "color": "#000000",
+      "visited": "#828282",
+      "textDecoration": "none"
+    },
+    "page": {
+      "backgroundColor": "#f6f6ef",
+      "maxWidth": "85%",
+      "fontFamily": "Verdana, Geneva, sans-serif"
+    }
+  }
+}
