@@ -58,9 +58,13 @@ public final class Session {
     public Instant getCreatedAt() { return createdAt; }
     public Instant getExpiresAt() { return expiresAt; }
 
-    /** Returns true if the session has passed its TTL. */
+    /**
+     * Returns true if the session has reached or passed its TTL.
+     * Uses {@code !now.isBefore(expiresAt)} (now >= expiresAt) so that
+     * zero-minute TTL sessions are evicted immediately on the first eviction run.
+     */
     public boolean isExpired(Instant now) {
-        return now.isAfter(expiresAt);
+        return !now.isBefore(expiresAt);
     }
 
     /**

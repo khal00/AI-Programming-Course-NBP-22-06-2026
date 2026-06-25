@@ -3,16 +3,21 @@ package pl.nbp.copilot.config;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import pl.nbp.copilot.image.DefaultImageService;
 import pl.nbp.copilot.image.ImageService;
+import pl.nbp.copilot.session.InMemorySessionStore;
+import pl.nbp.copilot.session.SessionStore;
 
 /**
  * Enables binding of {@link AppProperties} from the application.yml / environment.
+ * Enables scheduling for the session eviction job.
  * Also wires beans that require config-property constructor parameters.
  * Imported automatically by @SpringBootApplication component scan.
  */
 @Configuration
 @EnableConfigurationProperties(AppProperties.class)
+@EnableScheduling
 public class AppConfig {
 
     /**
@@ -24,5 +29,10 @@ public class AppConfig {
     @Bean
     ImageService imageService(AppProperties props) {
         return new DefaultImageService(props.image().maxBytes(), IMAGE_MAX_EDGE_PX);
+    }
+
+    @Bean
+    SessionStore sessionStore(AppProperties props) {
+        return new InMemorySessionStore(props.session().ttlMinutes());
     }
 }
