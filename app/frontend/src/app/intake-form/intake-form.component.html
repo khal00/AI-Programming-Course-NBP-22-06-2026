@@ -1,0 +1,168 @@
+<div class="intake-wrapper">
+  <h1 class="intake-title">Zgłoszenie reklamacji lub zwrotu</h1>
+  <p class="intake-intro">
+    Wypełnij formularz i prześlij zdjęcie urządzenia, aby otrzymać wstępną ocenę swojej sprawy.
+    Ocena jest wstępna i niewiążąca — ostateczną decyzję podejmuje pracownik obsługi.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="intake-form" novalidate>
+
+    <!-- ── 1. Typ zgłoszenia ── -->
+    <div class="form-section">
+      <label class="field-label">Typ zgłoszenia</label>
+      <mat-radio-group formControlName="caseType" class="case-type-group">
+        <mat-radio-button value="COMPLAINT">Reklamacja</mat-radio-button>
+        <mat-radio-button value="RETURN">Zwrot</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <!-- ── 2. Kategoria sprzętu ── -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Kategoria sprzętu</mat-label>
+      <mat-select formControlName="category">
+        @for (cat of categories(); track cat.code) {
+          <mat-option [value]="cat.code">{{ cat.label }}</mat-option>
+        }
+      </mat-select>
+      @if (form.get('category')?.invalid && form.get('category')?.touched) {
+        <mat-error>Wybierz kategorię sprzętu.</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ── 3. Model / nazwa urządzenia ── -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Model / nazwa urządzenia</mat-label>
+      <input matInput formControlName="modelName" placeholder="np. Samsung Galaxy S24" />
+      @if (form.get('modelName')?.invalid && form.get('modelName')?.touched) {
+        <mat-error>Podaj nazwę lub model urządzenia.</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ── 4. Data zakupu ── -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Data zakupu</mat-label>
+      <input
+        matInput
+        [matDatepicker]="purchaseDatePicker"
+        formControlName="purchaseDate"
+        [max]="today"
+        placeholder="DD.MM.RRRR"
+        readonly
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="purchaseDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #purchaseDatePicker></mat-datepicker>
+      @if (form.get('purchaseDate')?.hasError('required') && form.get('purchaseDate')?.touched) {
+        <mat-error>Podaj datę zakupu.</mat-error>
+      }
+      @if (form.get('purchaseDate')?.hasError('futureDate') && form.get('purchaseDate')?.touched) {
+        <mat-error>Data zakupu nie może być w przyszłości.</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ── 5. Przyczyna (wymagane gdy Reklamacja) ── -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>
+        Przyczyna
+        @if (form.get('caseType')?.value === 'COMPLAINT') {
+          <span class="required-note">(wymagane)</span>
+        }
+      </mat-label>
+      <textarea
+        matInput
+        formControlName="reason"
+        rows="4"
+        placeholder="Opisz usterkę lub powód zwrotu..."
+      ></textarea>
+      @if (form.get('reason')?.invalid && form.get('reason')?.touched) {
+        <mat-error>Opisz przyczynę reklamacji.</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- ── 6. Zdjęcie ── -->
+    <div class="upload-section">
+      <label class="field-label">
+        Zdjęcie urządzenia
+        <span class="required-note">(wymagane)</span>
+      </label>
+      <p class="upload-hint">
+        Akceptowane formaty: JPEG, PNG, WebP &bull; Maks. 10 MB
+      </p>
+
+      @if (!imageFile()) {
+        <!-- Drop zone -->
+        <div
+          class="drop-zone"
+          (dragover)="onDragOver($event)"
+          (drop)="onDrop($event)"
+          (click)="fileInput.click()"
+          role="button"
+          tabindex="0"
+          (keydown.enter)="fileInput.click()"
+          (keydown.space)="fileInput.click()"
+          aria-label="Kliknij lub przeciągnij plik, aby przesłać zdjęcie"
+        >
+          <span class="drop-zone-text">Kliknij lub przeciągnij tutaj zdjęcie urządzenia</span>
+        </div>
+      } @else {
+        <!-- Thumbnail preview -->
+        <div class="image-preview">
+          @if (imagePreviewUrl()) {
+            <img [src]="imagePreviewUrl()!" alt="Podgląd zdjęcia" class="preview-img" />
+          }
+          <div class="preview-meta">
+            <span class="preview-name">{{ imageFile()!.name }}</span>
+            <button
+              type="button"
+              mat-button
+              class="remove-btn"
+              (click)="clearImage()"
+              aria-label="Usuń zdjęcie"
+            >
+              Usuń
+            </button>
+          </div>
+        </div>
+      }
+
+      <input
+        #fileInput
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        class="hidden-file-input"
+        (change)="onFileInputChange($event)"
+        aria-hidden="true"
+        tabindex="-1"
+      />
+
+      @if (imageError()) {
+        <p class="field-error" role="alert">{{ imageError() }}</p>
+      }
+    </div>
+
+    <!-- ── Submit error ── -->
+    @if (submitError()) {
+      <p class="submit-error" role="alert">{{ submitError() }}</p>
+    }
+
+    <!-- ── Submit button ── -->
+    <div class="submit-row">
+      @if (isSubmitting()) {
+        <div class="submit-progress">
+          <mat-spinner diameter="20"></mat-spinner>
+          <span class="submit-status">Analizuję zdjęcie i dane zgłoszenia&hellip;</span>
+        </div>
+      }
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        class="submit-btn"
+        [disabled]="!isFormAndImageValid || isSubmitting()"
+        data-testid="submit-btn"
+      >
+        Wyślij
+      </button>
+    </div>
+
+  </form>
+</div>

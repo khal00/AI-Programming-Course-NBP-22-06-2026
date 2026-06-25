@@ -1,0 +1,101 @@
+<!-- ─── Refresh-without-state guard ──────────────────────────────────────── -->
+<div *ngIf="!caseResponse(); else chatView" class="no-session-notice">
+  <p>Kontekst sesji jest niedostępny. Odśwież formularz i rozpocznij od nowa.</p>
+  <button mat-button (click)="goHome()">Wróć do formularza</button>
+</div>
+
+<!-- ─── Main chat view ─────────────────────────────────────────────────────── -->
+<ng-template #chatView>
+  <div class="chat-shell">
+
+    <!-- ── Case summary header ── -->
+    <div class="case-header" *ngIf="caseResponse() as r">
+      <div class="case-header__meta">
+        <div class="case-header__thumbnail">
+          <img *ngIf="previewUrl" [src]="previewUrl" alt="Zdjęcie urządzenia" class="case-header__img" />
+          <div *ngIf="!previewUrl" class="case-header__img-placeholder">
+            <mat-icon>devices</mat-icon>
+          </div>
+        </div>
+        <div class="case-header__info">
+          <span class="case-header__label">{{ r.caseSummary.caseTypeLabel }}</span>
+          <span class="case-header__separator"> · </span>
+          <span class="case-header__category">{{ r.caseSummary.categoryLabel }}</span>
+          <span class="case-header__separator"> · </span>
+          <span class="case-header__model">{{ r.caseSummary.modelName }}</span>
+          <span class="case-header__separator"> · </span>
+          <span class="case-header__date">{{ r.caseSummary.purchaseDate }}</span>
+        </div>
+      </div>
+      <div class="case-header__verdict">
+        <mat-chip [color]="verdictColor" highlighted>
+          {{ verdictLabel }}
+        </mat-chip>
+      </div>
+    </div>
+
+    <!-- ── Message list ── -->
+    <div class="message-list" #messageList>
+      <div
+        *ngFor="let msg of messages()"
+        class="message-row"
+        [class.message-row--user]="msg.role === 'user'"
+        [class.message-row--assistant]="msg.role === 'assistant'"
+      >
+        <!-- User bubble -->
+        <div *ngIf="msg.role === 'user'" class="user-bubble">
+          {{ msg.text }}
+        </div>
+
+        <!-- Assistant bubble -->
+        <div *ngIf="msg.role === 'assistant'" class="assistant-bubble">
+          <markdown [data]="msg.text" />
+
+          <!-- Typing indicator while streaming -->
+          <span *ngIf="msg.streaming" class="typing-indicator" aria-label="Asystent pisze…">
+            <span></span><span></span><span></span>
+          </span>
+
+          <!-- Inline stream error -->
+          <div *ngIf="msg.error" class="stream-error">
+            <span class="stream-error__text">{{ msg.error }}</span>
+            <button mat-button class="stream-error__retry" (click)="retryLastMessage()">
+              Spróbuj ponownie
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Global typing indicator (when no assistant bubble yet) ── -->
+    <div *ngIf="isStreaming()" class="global-typing-indicator" aria-live="polite">
+      Asystent pisze…
+    </div>
+
+    <!-- ── Input area ── -->
+    <div class="input-area">
+      <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="input-area__form">
+        <mat-form-field appearance="outline" class="input-area__field">
+          <mat-label>Wpisz wiadomość…</mat-label>
+          <textarea
+            matInput
+            formControlName="message"
+            rows="2"
+            (keydown.enter)="$event.preventDefault(); sendMessage()"
+          ></textarea>
+        </mat-form-field>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="isStreaming() || messageForm.invalid"
+          aria-label="Wyślij"
+          class="input-area__send"
+        >
+          <mat-icon>send</mat-icon>
+          <span>Wyślij</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</ng-template>
