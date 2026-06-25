@@ -175,6 +175,7 @@ export class IntakeFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.stateService.setLastCaseResponse(response);
+          this.stateService.setPreviewUrl(this.imagePreviewUrl());
           this.router.navigate(['/chat', response.sessionId]);
         },
         error: (err: CaseServiceError) => {

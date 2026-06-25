@@ -97,6 +97,8 @@ describe('IntakeFormComponent', () => {
     mockStateService = jasmine.createSpyObj<CaseStateService>('CaseStateService', [
       'setLastCaseResponse',
       'clearLastCaseResponse',
+      'setPreviewUrl',
+      'clearPreviewUrl',
     ]);
     mockRouter = jasmine.createSpyObj<Router>('Router', ['navigate']);
 
