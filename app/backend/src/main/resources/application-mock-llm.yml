@@ -1,0 +1,33 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Spring profile: mock-llm
+#
+# Purpose: Run the application without a real OpenRouter API key for E2E and
+# integration tests (QA-engineer Playwright tests, local development without
+# LLM access).
+#
+# Behavior:
+#   - The AppPropertiesValidator is suppressed (profile "!mock-llm"),
+#     so a blank or dummy key does NOT prevent startup.
+#   - A placeholder api-key is set here so the fail-fast guard in the DEFAULT
+#     profile is not triggered if this profile is activated alone.
+#   - The actual LlmService stub (deterministic canned responses) will be
+#     implemented in a later step and will also carry @Profile("mock-llm").
+#
+# Mock-LLM scenario selection:
+#   The LlmService stub (future step) selects a scenario by inspecting the
+#   uploaded image filename. See docs/contracts/api-contract.md §4.
+#   Example: upload a file named "clean-return.jpg" → APPROVE verdict.
+#
+# Activation:
+#   ./mvnw spring-boot:run -Dspring-boot.run.profiles=mock-llm
+#   or: SPRING_PROFILES_ACTIVE=mock-llm java -jar backend.jar
+#   or in tests: @ActiveProfiles("mock-llm")
+# ──────────────────────────────────────────────────────────────────────────────
+
+app:
+  openrouter:
+    # Dummy placeholder — no real LLM calls are made in the mock-llm profile.
+    # The actual LlmService bean for this profile returns canned responses.
+    api-key: "mock-key-placeholder-no-real-llm-calls"
+    model-vision: "mock/vision"
+    model-reasoning: "mock/reasoning"

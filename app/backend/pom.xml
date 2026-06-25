@@ -74,6 +74,40 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <!--
+                Copy the policy documents from the shared docs/policies/ directory
+                (source of truth) into the backend classpath resources at build time.
+                The PolicyProvider (later step) loads them from the classpath.
+                Bound to generate-resources so files are available before compilation
+                and during test execution (ADR-001, PRD §8).
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-policy-docs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/policies</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../../docs/policies</directory>
+                                    <includes>
+                                        <include>return-policy.md</include>
+                                        <include>complaint-policy.md</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
