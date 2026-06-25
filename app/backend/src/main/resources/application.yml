@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: hardware-service-decision-copilot
+  # Java 21 virtual threads keep blocking SSE/LLM relays cheap (ADR-001).
+  threads:
+    virtual:
+      enabled: true
+  servlet:
+    multipart:
+      # Reject oversized uploads early; mirrors the 10 MB functional limit (PRD §8, AC-08).
+      max-file-size: 10MB
+      max-request-size: 12MB
+
+server:
+  port: 8080
+
+# Application configuration (ADR-000 §7). Values are overridable via environment variables.
+app:
+  openrouter:
+    # Primary key; falls back to OPENAI_API_KEY if unset (see AppProperties wiring, ADR-002).
+    api-key: ${OPENROUTER_API_KEY:${OPENAI_API_KEY:}}
+    base-url: ${OPENROUTER_BASE_URL:https://openrouter.ai/api/v1}
+    model-vision: ${OPENROUTER_MODEL_VISION:openai/gpt-4o}
+    model-reasoning: ${OPENROUTER_MODEL_REASONING:anthropic/claude-sonnet-4}
+    app-title: ${OPENROUTER_APP_TITLE:Hardware Service Decision Copilot}
+    app-referer: ${OPENROUTER_APP_REFERER:http://localhost:4200}
+  image:
+    max-bytes: ${APP_IMAGE_MAX_BYTES:10485760}
+  session:
+    ttl-minutes: ${APP_SESSION_TTL_MINUTES:120}
+
+logging:
+  level:
+    pl.nbp.copilot: INFO
