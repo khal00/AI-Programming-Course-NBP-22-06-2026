@@ -1,0 +1,135 @@
+// ─── HN Design Tokens ─────────────────────────────────────────────────────────
+// Source: assets/design-tokens.json (Hacker News brand system)
+
+// SCSS variables
+$hn-color-brand-primary:    #ff6600;
+$hn-color-bg-default:       #f6f6ef;
+$hn-color-bg-light:         #ffffff;
+$hn-color-bg-header:        #ff6600;
+$hn-color-text-primary:     #000000;
+$hn-color-text-secondary:   #828282;
+$hn-color-text-muted:       #828282;
+$hn-color-text-dark:        #222222;
+$hn-color-text-on-brand:    #000000;
+$hn-color-border-logo:      #ffffff;
+
+$hn-font-family-primary:    Verdana, Geneva, sans-serif;
+$hn-font-size-xs:           7pt;
+$hn-font-size-base:         10pt;
+$hn-font-size-md:           12pt;
+$hn-font-weight-regular:    400;
+$hn-font-weight-bold:       700;
+
+$hn-spacing-1: 4px;
+$hn-spacing-2: 8px;
+$hn-spacing-3: 12px;
+$hn-spacing-4: 16px;
+$hn-spacing-5: 20px;
+$hn-spacing-6: 24px;
+$hn-spacing-7: 28px;
+$hn-spacing-8: 32px;
+
+// ─── Angular Material Theme ────────────────────────────────────────────────────
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$orange-palette,
+    ),
+    typography: (
+      plain-family: #{$hn-font-family-primary},
+      brand-family: #{$hn-font-family-primary},
+    ),
+    density: -2,
+  ));
+}
+
+// ─── CSS Custom Properties (design tokens as CSS vars) ────────────────────────
+:root {
+  --hn-color-brand-primary:   #{$hn-color-brand-primary};
+  --hn-color-bg-default:      #{$hn-color-bg-default};
+  --hn-color-bg-light:        #{$hn-color-bg-light};
+  --hn-color-bg-header:       #{$hn-color-bg-header};
+  --hn-color-text-primary:    #{$hn-color-text-primary};
+  --hn-color-text-secondary:  #{$hn-color-text-secondary};
+  --hn-color-text-muted:      #{$hn-color-text-muted};
+  --hn-color-text-dark:       #{$hn-color-text-dark};
+  --hn-color-text-on-brand:   #{$hn-color-text-on-brand};
+  --hn-color-border-logo:     #{$hn-color-border-logo};
+
+  --hn-font-family-primary:   #{$hn-font-family-primary};
+  --hn-font-size-xs:          #{$hn-font-size-xs};
+  --hn-font-size-base:        #{$hn-font-size-base};
+  --hn-font-size-md:          #{$hn-font-size-md};
+  --hn-font-weight-regular:   #{$hn-font-weight-regular};
+  --hn-font-weight-bold:      #{$hn-font-weight-bold};
+
+  --hn-spacing-1: #{$hn-spacing-1};
+  --hn-spacing-2: #{$hn-spacing-2};
+  --hn-spacing-3: #{$hn-spacing-3};
+  --hn-spacing-4: #{$hn-spacing-4};
+  --hn-spacing-5: #{$hn-spacing-5};
+  --hn-spacing-6: #{$hn-spacing-6};
+  --hn-spacing-7: #{$hn-spacing-7};
+  --hn-spacing-8: #{$hn-spacing-8};
+}
+
+// ─── Global Reset / Base ──────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: $hn-color-bg-default;
+  font-family: $hn-font-family-primary;
+  font-size: $hn-font-size-base;
+  color: $hn-color-text-primary;
+  // Override Material's default Roboto
+  font-family: $hn-font-family-primary !important;
+}
+
+// ─── Material overrides — flatten the design ──────────────────────────────────
+// Eliminate default Material elevation/shadow everywhere
+.mat-mdc-card,
+.mat-mdc-dialog-container,
+.mat-mdc-menu-panel,
+.mat-mdc-select-panel,
+.mat-mdc-autocomplete-panel,
+.mat-mdc-tooltip,
+.mat-mdc-snack-bar-container {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+// Flat buttons
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-outlined-button,
+.mat-mdc-icon-button {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+// Inputs
+.mat-mdc-form-field {
+  font-family: $hn-font-family-primary !important;
+  font-size: $hn-font-size-base !important;
+}
+
+// Override accent color to brand orange
+.mat-mdc-progress-bar .mdc-linear-progress__bar-inner {
+  border-color: $hn-color-brand-primary !important;
+}

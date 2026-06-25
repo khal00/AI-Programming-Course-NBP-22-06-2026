@@ -1,0 +1,35 @@
+.hn-toolbar {
+  background-color: var(--hn-color-brand-primary) !important;
+  color: var(--hn-color-text-on-brand) !important;
+  padding: 2px 8px !important;
+  min-height: 24px !important;
+  height: 24px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.hn-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  margin-right: 4px;
+}
+
+.hn-logo {
+  border: 1px solid var(--hn-color-border-logo);
+  display: block;
+}
+
+.hn-title {
+  font-family: var(--hn-font-family-primary);
+  font-size: var(--hn-font-size-base);
+  font-weight: 700;
+  color: var(--hn-color-text-on-brand);
+}
+
+.hn-main {
+  background-color: var(--hn-color-bg-default);
+  min-height: calc(100vh - 24px);
+  font-family: var(--hn-font-family-primary);
+  font-size: var(--hn-font-size-base);
+}
