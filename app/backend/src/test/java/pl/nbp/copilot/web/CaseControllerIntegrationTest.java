@@ -291,6 +291,9 @@ class CaseControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(chatReq)))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", org.hamcrest.Matchers.containsString("text/event-stream")))
+                // DEF-001: proxy-buffering headers must be present so Nginx/Vite proxy does not buffer the SSE stream
+                .andExpect(header().string("X-Accel-Buffering", "no"))
+                .andExpect(header().string("Cache-Control", org.hamcrest.Matchers.containsString("no-cache")))
                 .andReturn();
 
         String sseContent = chatResult.getResponse().getContentAsString();

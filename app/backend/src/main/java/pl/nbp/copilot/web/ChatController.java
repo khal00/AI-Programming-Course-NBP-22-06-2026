@@ -1,5 +1,6 @@
 package pl.nbp.copilot.web;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,13 @@ public class ChatController {
                  produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamReply(
             @PathVariable String sessionId,
-            @Valid @RequestBody ChatRequest request) {
+            @Valid @RequestBody ChatRequest request,
+            HttpServletResponse response) {
+
+        // DEF-001: disable reverse-proxy buffering (Nginx X-Accel-Buffering, Vite/Angular dev proxy).
+        // Cache-Control: no-cache is also required by the SSE spec so intermediaries don't buffer.
+        response.setHeader("X-Accel-Buffering", "no");
+        response.setHeader("Cache-Control", "no-cache");
 
         // Synchronous session check: throw 404 before spawning the virtual thread.
         // This ensures SessionNotFoundException propagates to GlobalExceptionHandler as HTTP 404.
