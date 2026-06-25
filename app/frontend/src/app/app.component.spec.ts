@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { signal } from '@angular/core';
 import { AppComponent } from './app.component';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
@@ -6,15 +8,32 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient } from '@angular/common/http';
 import { provideMarkdown } from 'ngx-markdown';
 
+import { CaseStateService } from './services/case-state.service';
+import { ChatStreamService } from './services/chat-stream.service';
+import { EMPTY } from 'rxjs';
+
 describe('AppComponent', () => {
   beforeEach(async () => {
+    const mockCaseStateService = jasmine.createSpyObj(
+      'CaseStateService',
+      ['setLastCaseResponse', 'clearLastCaseResponse', 'setPreviewUrl', 'clearPreviewUrl'],
+      {
+        lastCaseResponse: signal(null),
+        previewUrl: signal(null as string | null),
+      }
+    );
+    const mockChatStreamService = jasmine.createSpyObj('ChatStreamService', ['streamMessage']);
+    mockChatStreamService.streamMessage.and.returnValue(EMPTY);
+
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
         provideRouter(routes),
         provideAnimationsAsync(),
         provideHttpClient(),
-        provideMarkdown()
+        provideMarkdown(),
+        { provide: CaseStateService, useValue: mockCaseStateService },
+        { provide: ChatStreamService, useValue: mockChatStreamService },
       ]
     }).compileComponents();
   });
@@ -53,5 +72,19 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const main = compiled.querySelector('.hn-main');
     expect(main).toBeTruthy();
+  });
+
+  it('navigates to IntakeFormComponent for route /', async () => {
+    const harness = await RouterTestingHarness.create('/');
+    const el = harness.routeNativeElement;
+    expect(el).toBeTruthy();
+    expect(el!.tagName.toLowerCase()).toBe('app-intake-form');
+  });
+
+  it('navigates to ChatComponent for route /chat/:id', async () => {
+    const harness = await RouterTestingHarness.create('/chat/test-session-id');
+    const el = harness.routeNativeElement;
+    expect(el).toBeTruthy();
+    expect(el!.tagName.toLowerCase()).toBe('app-chat');
   });
 });
